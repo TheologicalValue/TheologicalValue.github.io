@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:teoacheckers/result.dart';
+import 'package:untitled/result.dart';
 import 'dart:math';
 
 import 'main.dart';
@@ -22,9 +22,9 @@ class QuestionState extends State<Questions> {
   String thisQuestion = "Loading...";
   int page = 0;
   String personalIdentify = "";
-  List<int> value = [0, 0, 0];
-  List<int> offerValue = [0, 0, 0];
-  List<int> maxValue = [0, 0, 0];
+  List<int> value = [0, 0, 0, 0];
+  List<int> offerValue = [0, 0, 0, 0];
+  List<int> maxValue = [0, 0, 0, 0];
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -136,16 +136,18 @@ class QuestionState extends State<Questions> {
       page = questions.length;
       int i = Random().nextInt(questions.length);
       String qid = questions[i]['QID'];
-      int? vb0, vb1, vb2;
+      int? vb0, vb1, vb2, vb3;
       vb0 = questions[i]['FreedomValue'];
       vb1 = questions[i]['FaithfulValue'];
       vb2 = questions[i]['PluralValue'];
+      vb3 = questions[i]['ProgressiveValue'];
       setState(() {
         thisQuestion = questions[i]['NAME'];
         personalIdentify = personalIdentify + qid;
         offerValue[0] = vb0?? 0;
         offerValue[1] = vb1?? 0;
         offerValue[2] = vb2?? 0;
+        offerValue[3] = vb3?? 0;
         questions.removeAt(i);
       });
     });
@@ -163,9 +165,11 @@ class QuestionState extends State<Questions> {
     value[0] = value[0] + offerValue[0] * cast;
     value[1] = value[1] + offerValue[1] * cast;
     value[2] = value[2] + offerValue[2] * cast;
+    value[3] = value[3] + offerValue[3] * cast;
     maxValue[0] = maxValue[0] + offerValue[0].abs() * 2;
     maxValue[1] = maxValue[1] + offerValue[1].abs() * 2;
     maxValue[2] = maxValue[2] + offerValue[2].abs() * 2;
+    maxValue[3] = maxValue[3] + offerValue[3].abs() * 2;
     if (page == 0) {
       Navigator.push(
           context,
@@ -174,14 +178,16 @@ class QuestionState extends State<Questions> {
       return;
     }
     int i = Random().nextInt(questions.length);
-    int? vb0, vb1,vb2;
+    int? vb0, vb1, vb2, vb3;
     vb0 = questions[i]['FreedomValue'];
     vb1 = questions[i]['FaithfulValue'];
     vb2 = questions[i]['PluralValue'];
+    vb3 = questions[i]['ProgressiveValue'];
     String qid = questions[i]['QID'];
     offerValue[0] = vb0?? 0;
     offerValue[1] = vb1?? 0;
     offerValue[2] = vb2?? 0;
+    offerValue[3] = vb3?? 0;
     setState(() {
       page = questions.length;
       thisQuestion = questions[i]['NAME'];

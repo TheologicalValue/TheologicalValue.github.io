@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:teoacheckers/tool/tools.dart';
+import 'package:untitled/tool/tools.dart';
 
 class SeeAlso extends StatefulWidget {
   const SeeAlso({Key? key, required this.pid}) : super(key: key);
@@ -30,12 +29,15 @@ class _SeeAlsoState extends State<SeeAlso> {
           elevation: 10.0,
           actions: [],
         ),
-        body: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-            itemCount: _personalIdWidgets.length,
-            itemBuilder: (BuildContext context, index) {
-              return _personalIdWidgets[index];
-            }
+        body: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              itemCount: _personalIdWidgets.length,
+              itemBuilder: (BuildContext context, index) {
+                return _personalIdWidgets[index];
+              }
+          ),
         )
           /*GridView.count(
           primary: false,
@@ -64,7 +66,7 @@ class _SeeAlsoState extends State<SeeAlso> {
 
             _personalIdWidgets.add(PersonalIdWidget(
               pid: _ids[j],
-              number: j,
+              number: j+1,
               output: l[i]['NAME'],
             ));
           j++;

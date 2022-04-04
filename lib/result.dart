@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teoacheckers/seeAlso.dart';
+import 'package:untitled/seeAlso.dart';
 
 class Results extends StatefulWidget {
   const Results({Key? key, required this.personalId, required this.value, required this.maxValue})
@@ -83,6 +83,15 @@ class _ResultsState extends State<Results> {
                         aaa: 15,
                         textA: "배타주의",
                         textB: "다원주의"),
+                    const SizedBox(height: 30.0),
+                    ValueBar(
+                        totalKey: widget.maxValue[3],
+                        requireKey: widget.value[3],
+                        colorA: Colors.cyan,
+                        colorB: Colors.purple,
+                        aaa: 15,
+                        textA: "낙관주의",
+                        textB: "비관주의"),
 
                     //Text(value[0].toString() + "::" + value[1].toString() + "::" +  value[2].toString())
                     const Divider(
@@ -90,7 +99,7 @@ class _ResultsState extends State<Results> {
                         color: Colors.grey,
                         thickness: 0.5,
                         endIndent: 30),
-                    Text("personal ID: " + widget.personalId),
+                    //Text("personal ID: " + widget.personalId),
                     const Text("좌측 상단 메뉴 버튼을 통해 선택한 내용을 다시 확인할 수 있습니다.")
                   ],
                 ),
@@ -124,60 +133,57 @@ class ValueBar extends StatelessWidget {
       color: Colors.black,
       fontSize: 16,
     );
-    var barWidth = (((totalKey / 2) + requireKey) / totalKey);
+    var barWidth = (((totalKey + requireKey)  / 2) / totalKey);
+    print("NAME:" + textA + totalKey.toString() + requireKey.toString());
+    double abc,bbc;
+    if(barWidth * MediaQuery.of(context).size.width < aaa * 2 ){
+      abc = 0;
+      bbc=(1 - barWidth) * MediaQuery.of(context).size.width-(aaa*4);
+    }else if((1-barWidth) * MediaQuery.of(context).size.width < aaa * 2 ){
+      abc = barWidth * MediaQuery.of(context).size.width - (aaa*4);
+      bbc = 0;
+    }else{
+      abc = barWidth * MediaQuery.of(context).size.width - (aaa*2);
+      bbc=(1 - barWidth) * MediaQuery.of(context).size.width-(aaa*2);
+    }
     if (MediaQuery.of(context).size.height / MediaQuery.of(context).size.width >
         4 / 3) {
+
+
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
-              textA +
-                  ((((totalKey / 2) + requireKey) / totalKey) * 100)
-                      .toStringAsFixed(2),
-              style: barTextStyle),
+          Text(textA + (barWidth * 100).toStringAsFixed(2), style: barTextStyle),
           Row(
             children: [
               Container(
                 height: 40,
-                width: barWidth * MediaQuery.of(context).size.width - aaa * 2,
+                width: abc,
                 decoration: BoxDecoration(color: colorA),
               ),
               Container(
                 height: 40,
-                width: (1 - barWidth) * MediaQuery.of(context).size.width -
-                    aaa * 2,
+                width: bbc,
                 decoration: BoxDecoration(color: colorB),
               ),
             ],
           ),
-          Text(
-              textB +
-                  ((((totalKey / 2) - requireKey) / totalKey) * 100)
-                      .toStringAsFixed(2),
-              style: barTextStyle),
+          Text(textB + ((1 - barWidth) * 100).toStringAsFixed(2), style: barTextStyle),
         ],
       );
     } else {
       return Row(children: [
         Container(
           height: 40,
-          width: barWidth * MediaQuery.of(context).size.width - aaa * 2,
+          width: abc,
           decoration: BoxDecoration(color: colorA),
-          child: Text(
-              textA +
-                  ((((totalKey / 2) + requireKey) / totalKey) * 100)
-                      .toStringAsFixed(1),
-              style: barTextStyle),
+          child: Text(textA + (barWidth * 100).toStringAsFixed(2), style: barTextStyle),
         ),
         Container(
           height: 40,
-          width: (1 - barWidth) * MediaQuery.of(context).size.width - aaa * 2,
+          width: bbc,
           decoration: BoxDecoration(color: colorB),
-          child: Text(
-              textB +
-                  ((((totalKey / 2) - requireKey) / totalKey) * 100)
-                      .toStringAsFixed(2),
-              style: barTextStyle),
+          child: Text(textB + ((1 - barWidth) * 100).toStringAsFixed(2), style: barTextStyle),
         ),
       ]);
     }
