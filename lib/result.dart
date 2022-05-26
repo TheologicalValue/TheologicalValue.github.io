@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/seeAlso.dart';
+import 'package:tfactors/seeAlso.dart';
+import 'package:tfactors/tool/tools.dart';
 
 class Results extends StatefulWidget {
-  const Results({Key? key, required this.personalId, required this.value, required this.maxValue})
-      : super(key: key);
+  const Results({Key? key, required this.personalId, required this.value, required this.maxValue}) : super(key: key);
 
-  final String personalId;
+  final PersonalId personalId;
   final List<int> value;
   final List<int> maxValue;
 
@@ -14,13 +14,10 @@ class Results extends StatefulWidget {
 }
 
 class _ResultsState extends State<Results> {
+  String sumularResult = "Loading...";
   @override
   Widget build(BuildContext context) {
-    const TextStyle titleTextStyle = TextStyle(
-        color: Colors.amber,
-        letterSpacing: 2.0,
-        fontSize: 24.0,
-        fontWeight: FontWeight.bold);
+    const TextStyle titleTextStyle = TextStyle(color: Colors.amber, letterSpacing: 2.0, fontSize: 24.0, fontWeight: FontWeight.bold);
 
     return MaterialApp(
         title: "Questions",
@@ -34,18 +31,13 @@ class _ResultsState extends State<Results> {
               leading: IconButton(
                 icon: const Icon(Icons.menu_open),
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => SeeAlso(pid: widget.personalId)));
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SeeAlso(pid: widget.personalId.personalId)));
                 },
               ),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.map_outlined),
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -93,21 +85,38 @@ class _ResultsState extends State<Results> {
                         textA: "낙관주의",
                         textB: "비관주의"),
 
-                    //Text(value[0].toString() + "::" + value[1].toString() + "::" +  value[2].toString())
-                    const Divider(
-                        height: 60.0,
-                        color: Colors.grey,
-                        thickness: 0.5,
-                        endIndent: 30),
+                    const Divider(height: 60.0, color: Colors.grey, thickness: 0.5, endIndent: 30),
+                    Text("추천하는 교회: " + sumularResult),
                     //Text("personal ID: " + widget.personalId),
-                    const Text("좌측 상단 메뉴 버튼을 통해 선택한 내용을 다시 확인할 수 있습니다.")
+                    const Text("좌측 상단 메뉴 버튼을 통해 선택한 내용을 다시 확인할 수 있습니다."),
+                    //Text(widget.personalId.personalId.toString()) //디버그용
                   ],
                 ),
               ),
             )));
   }
+
+  _initfunc() async {
+    Questionsjson qj = Questionsjson();
+    Setsjson sj = Setsjson();
+    await qj.loadFile();
+    await sj.loadFile();
+    var v = widget.personalId.getValues(qj.getQuestions());
+    SimularValueResearcher svr = SimularValueResearcher(sj.getSets(), widget.personalId);
+    setState(() {
+      sumularResult = sj.getSets()[svr.getSimularStructureInSense(v)]['NAME'];
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _initfunc();
+  }
 }
 
+//K Value Bar
 class ValueBar extends StatelessWidget {
   const ValueBar(
       {Key? key,
@@ -133,23 +142,19 @@ class ValueBar extends StatelessWidget {
       color: Colors.black,
       fontSize: 16,
     );
-    var barWidth = (((totalKey + requireKey)  / 2) / totalKey);
-    print("NAME:" + textA + totalKey.toString() + requireKey.toString());
-    double abc,bbc;
-    if(barWidth * MediaQuery.of(context).size.width < aaa * 2 ){
+    var barWidth = (((totalKey + requireKey) / 2) / totalKey);
+    double abc, bbc;
+    if (barWidth * MediaQuery.of(context).size.width < aaa * 2) {
       abc = 0;
-      bbc=(1 - barWidth) * MediaQuery.of(context).size.width-(aaa*4);
-    }else if((1-barWidth) * MediaQuery.of(context).size.width < aaa * 2 ){
-      abc = barWidth * MediaQuery.of(context).size.width - (aaa*4);
+      bbc = (1 - barWidth) * MediaQuery.of(context).size.width - (aaa * 4);
+    } else if ((1 - barWidth) * MediaQuery.of(context).size.width < aaa * 2) {
+      abc = barWidth * MediaQuery.of(context).size.width - (aaa * 4);
       bbc = 0;
-    }else{
-      abc = barWidth * MediaQuery.of(context).size.width - (aaa*2);
-      bbc=(1 - barWidth) * MediaQuery.of(context).size.width-(aaa*2);
+    } else {
+      abc = barWidth * MediaQuery.of(context).size.width - (aaa * 2);
+      bbc = (1 - barWidth) * MediaQuery.of(context).size.width - (aaa * 2);
     }
-    if (MediaQuery.of(context).size.height / MediaQuery.of(context).size.width >
-        4 / 3) {
-
-
+    if (MediaQuery.of(context).size.height / MediaQuery.of(context).size.width > 4 / 3) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

@@ -1,11 +1,11 @@
 {
-    "name": "Theological Value",
-    "short_name": "MinisTalk",
+    "name": "Theological Factors",
+    "short_name": "tFactors",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Calculate your Christianity",
+    "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
