@@ -1,11 +1,11 @@
 {
-    "name": "Theological Factors",
-    "short_name": "tFactors",
+    "name": "개신교 신학 성향 분석기",
+    "short_name": "분석기",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "당신의 신앙 성향을 분석해드립니다.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
