@@ -19,89 +19,84 @@ class _ResultsState extends State<Results> {
   Widget build(BuildContext context) {
     const TextStyle titleTextStyle = TextStyle(color: Colors.amber, letterSpacing: 2.0, fontSize: 24.0, fontWeight: FontWeight.bold);
 
-    return MaterialApp(
-        title: "Questions",
-        theme: ThemeData(primarySwatch: Colors.purple),
-        home: Scaffold(
-            appBar: AppBar(
-              title: const Text("결과 페이지"),
-              centerTitle: true,
-              backgroundColor: Colors.purpleAccent,
-              elevation: 1.0,
-              leading: IconButton(
-                icon: const Icon(Icons.menu_open),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SeeAlso(pid: widget.personalId.personalId)));
-                },
-              ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.map_outlined),
-                  onPressed: () {},
-                ),
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("결과 페이지"),
+          centerTitle: true,
+          backgroundColor: Colors.purpleAccent,
+          elevation: 1.0,
+          leading: IconButton(
+            icon: const Icon(Icons.menu_open),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SeeAlso(pid: widget.personalId.personalId)));
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.map_outlined),
+              onPressed: () {},
+            ),
+          ],
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text("테스트 완료", style: titleTextStyle),
+                const SizedBox(height: 30.0),
+                ValueBar(
+                    totalKey: widget.maxValue[0],
+                    requireKey: widget.value[0],
+                    colorA: Colors.green,
+                    colorB: Colors.purple,
+                    aaa: 15,
+                    textA: "자유지향",
+                    textB: "전통지향"),
+                const SizedBox(height: 30.0),
+                ValueBar(
+                    totalKey: widget.maxValue[1],
+                    requireKey: widget.value[1],
+                    colorA: Colors.yellow,
+                    colorB: Colors.lightGreen,
+                    aaa: 15,
+                    textA: "신비-경건",
+                    textB: "직제-지식"),
+                const SizedBox(height: 30.0),
+                ValueBar(
+                    totalKey: widget.maxValue[2],
+                    requireKey: widget.value[2],
+                    colorA: Colors.red,
+                    colorB: Colors.indigo,
+                    aaa: 15,
+                    textA: "배타주의",
+                    textB: "다원주의"),
+                const SizedBox(height: 30.0),
+                ValueBar(
+                    totalKey: widget.maxValue[3],
+                    requireKey: widget.value[3],
+                    colorA: Colors.cyan,
+                    colorB: Colors.purple,
+                    aaa: 15,
+                    textA: "낙관주의",
+                    textB: "비관주의"),
+
+                const Divider(height: 60.0, color: Colors.grey, thickness: 0.5, endIndent: 30),
+                Text("추천하는 교회: " + sumularResult),
+                //Text("personal ID: " + widget.personalId),
+                const Text("좌측 상단 메뉴 버튼을 통해 선택한 내용을 다시 확인할 수 있습니다."),
+                //Text(widget.personalId.personalId.toString()) //디버그용
               ],
             ),
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text("테스트 완료", style: titleTextStyle),
-                    const SizedBox(height: 30.0),
-                    ValueBar(
-                        totalKey: widget.maxValue[0],
-                        requireKey: widget.value[0],
-                        colorA: Colors.green,
-                        colorB: Colors.purple,
-                        aaa: 15,
-                        textA: "자유지향",
-                        textB: "전통지향"),
-                    const SizedBox(height: 30.0),
-                    ValueBar(
-                        totalKey: widget.maxValue[1],
-                        requireKey: widget.value[1],
-                        colorA: Colors.yellow,
-                        colorB: Colors.lightGreen,
-                        aaa: 15,
-                        textA: "신비-경건",
-                        textB: "직제-지식"),
-                    const SizedBox(height: 30.0),
-                    ValueBar(
-                        totalKey: widget.maxValue[2],
-                        requireKey: widget.value[2],
-                        colorA: Colors.red,
-                        colorB: Colors.indigo,
-                        aaa: 15,
-                        textA: "배타주의",
-                        textB: "다원주의"),
-                    const SizedBox(height: 30.0),
-                    ValueBar(
-                        totalKey: widget.maxValue[3],
-                        requireKey: widget.value[3],
-                        colorA: Colors.cyan,
-                        colorB: Colors.purple,
-                        aaa: 15,
-                        textA: "낙관주의",
-                        textB: "비관주의"),
-
-                    const Divider(height: 60.0, color: Colors.grey, thickness: 0.5, endIndent: 30),
-                    Text("추천하는 교회: " + sumularResult),
-                    //Text("personal ID: " + widget.personalId),
-                    const Text("좌측 상단 메뉴 버튼을 통해 선택한 내용을 다시 확인할 수 있습니다."),
-                    //Text(widget.personalId.personalId.toString()) //디버그용
-                  ],
-                ),
-              ),
-            )));
+          ),
+        ));
   }
 
   _initfunc() async {
-    Questionsjson qj = Questionsjson();
     Setsjson sj = Setsjson();
-    await qj.loadFile();
     await sj.loadFile();
-    var v = widget.personalId.getValues(qj.getQuestions());
+    var v = await widget.personalId.getValues();
     SimularValueResearcher svr = SimularValueResearcher(sj.getSets(), widget.personalId);
     setState(() {
       sumularResult = sj.getSets()[svr.getSimularStructureInSense(v)]['NAME'];

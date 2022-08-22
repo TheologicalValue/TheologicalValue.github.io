@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tfactors/tool/DataManager.dart';
 import 'package:tfactors/tool/tools.dart';
 
 class SeeAlso extends StatefulWidget {
@@ -50,19 +51,18 @@ class _SeeAlsoState extends State<SeeAlso> {
   }
 
   _initfunc() async {
-    Questionsjson qj = Questionsjson();
-    await qj.loadFile();
+    List<Question> qc = await QuestionsCaller().questionCall();
     _personalIdWidgets.clear();
-    List l = qj.getQuestions();
+    //List l = qs.getQuestions();
     _ids.addAll(PersonalId(personalId: widget.pid).list);
     var j = 0;
     setState(() {
-      for (int i = 0; i < l.length; i++) {
-        if (_ids[0].substring(0, 3) == l[i]['QID'].toString()) {
+      for (int i = 0; i < qc.length; i++) {
+        if (_ids[0].substring(0, 3) == qc[i].qid.toString()) {
           _personalIdWidgets.add(PersonalIdWidget(
             pid: _ids[0],
             number: j + 1,
-            output: l[i]['NAME'],
+            output: qc[i].label,
           ));
           _ids.removeAt(0);
           if (_ids.isEmpty) return;

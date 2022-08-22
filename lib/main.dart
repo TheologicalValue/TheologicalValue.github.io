@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:tfactors/tool/DataManager.dart';
 import 'Questions.dart';
-import 'decodePersonal.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const TeoaCheck());
 }
 
@@ -11,7 +17,15 @@ class TeoaCheck extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "신학 성향 측정기", theme: ThemeData(primarySwatch: Colors.purple), home: const MyHomePage());
+    return MaterialApp(
+      title: "신학 성향 측정기",
+      theme: ThemeData(primarySwatch: Colors.purple),
+      //home: const MyHomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(),
+      },
+    );
   }
 }
 
@@ -32,7 +46,7 @@ class MyHomePage extends StatelessWidget {
             leading: IconButton(
               icon: const Icon(Icons.menu_open),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => const DecodePage()));
+                Navigator.pushNamed(context, "/data");
               },
             )),
         body: Padding(
@@ -199,7 +213,7 @@ class PrebysterianAndLiberalPage extends StatelessWidget {
                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => const MyHomePage()));
                       },
                       radious: 30.0),
-                  const Text(" 자유주의 - 전통주의 ", style: titleTextStyle),
+                  const Text(" 전통주의 - 자유주의 ", style: titleTextStyle),
                   IconPar(
                       name: "aaa/Liberian.jpg",
                       onTab: () {
@@ -423,7 +437,7 @@ class ProgessiveAndAntiProgressivePage extends StatelessWidget {
               const Text("낙관주의적 경향은 교회가 이 세상에 속하여 이 세계가 완전하게 되었거나, 될 수 있다고 말합니다. 즉 이 세계 자체가 하나님의 뜻이 펼쳐지는 공간이며 구원, 심판, 죽은 후의 세계를 다소 축소합니다.",
                   style: mainTextStyle),
               const Text(
-                  "예를 들어서 로마제국 콘스탄티누스의 기독교 공인으로 로마제국을 다시 이해했던 어용신학, 인간 사회가 기독교적 영향을 통해 완전한 사회로 변화할 수 있다고 고려하는 상황신학, 정치신학이 대표적입니다. 특징적으로 요한계시록에서 천년 왕국을 교회 그 자체로 이해하여, 천년 왕국 상태에 있거나 천년 왕국이 일어난 후 심판이 있을 것으로 보는 경향이 있습니다.",
+                  "예를 들어서 로마제국 콘스탄티누스의 기독교 공인으로 로마제국을 다시 이해했던 어용신학, 인간 사회가 기독교적 영향을 통해 완전한 사회로 변화할 수 있다고 고려하는 상황신학, 정치신학이 대표적입니다. 특징적으로 요한계시록에서 천년 왕국을 교회 그 자체로 이해하거나 천년 왕국 상태에 있거나 천년 왕국이 일어난 후 심판이 있을 것으로 보는 경향이 있습니다.",
                   style: mainTextStyle),
             ],
           ),

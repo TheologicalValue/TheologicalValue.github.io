@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tfactors/result.dart';
+import 'package:tfactors/tool/DataManager.dart';
 import 'package:tfactors/tool/tools.dart';
 import 'dart:math';
 
@@ -19,7 +21,7 @@ class Questions extends StatefulWidget {
 
 class QuestionState extends State<Questions> {
   //Map<dynamic,dynamic> m = Questions.quests;
-  List questions = [];
+  List<Question> questions = [];
   String thisQuestion = "Loading...";
   int page = 0;
   String _qid = "init";
@@ -29,11 +31,14 @@ class QuestionState extends State<Questions> {
   List<int> offerValue = [0, 0, 0, 0];
   List<int> maxValue = [0, 0, 0, 0];
 
+  void _funcinit() async {
+    questions = await QuestionsCaller().questionCall();
+    page = questions.length;
+    launchQuestion(0);
+  }
+
   @override
-  Widget build(BuildContext context) => MaterialApp(
-      title: "Questions",
-      theme: ThemeData(primarySwatch: Colors.purple),
-      home: Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text("설문조사 중"), centerTitle: true, backgroundColor: Colors.purpleAccent, elevation: 1.0),
         body: Center(
           child: Padding(
@@ -52,7 +57,7 @@ class QuestionState extends State<Questions> {
                         ButtonTheme(
                           child: ElevatedButton(
                             onPressed: () {
-                              luchQuestionMap(2);
+                              launchQuestion(2);
                             },
                             child: const Text("매우 동의"),
                             style: ElevatedButton.styleFrom(primary: Colors.red, elevation: 10.0),
@@ -63,7 +68,7 @@ class QuestionState extends State<Questions> {
                         ButtonTheme(
                           child: ElevatedButton(
                             onPressed: () {
-                              luchQuestionMap(1);
+                              launchQuestion(1);
                             },
                             child: const Text("동의"),
                             style: ElevatedButton.styleFrom(primary: Colors.redAccent, elevation: 10.0),
@@ -75,7 +80,7 @@ class QuestionState extends State<Questions> {
                         ButtonTheme(
                           child: ElevatedButton(
                             onPressed: () {
-                              luchQuestionMap(-1);
+                              launchQuestion(-1);
                             },
                             child: const Text("동의하지 않음"),
                             style: ElevatedButton.styleFrom(primary: Colors.blue, elevation: 10.0),
@@ -87,7 +92,7 @@ class QuestionState extends State<Questions> {
                         ButtonTheme(
                           child: ElevatedButton(
                             onPressed: () {
-                              luchQuestionMap(-2);
+                              launchQuestion(-2);
                             },
                             child: const Text("매우 동의하지 않음"),
                             style: ElevatedButton.styleFrom(primary: Colors.blueAccent, elevation: 10.0),
@@ -99,7 +104,7 @@ class QuestionState extends State<Questions> {
                         ButtonTheme(
                           child: ElevatedButton(
                             onPressed: () {
-                              luchQuestionMap(0);
+                              launchQuestion(0);
                             },
                             child: const Text("모른다/중립"),
                             style: ElevatedButton.styleFrom(primary: Colors.amber, elevation: 10.0),
@@ -113,40 +118,46 @@ class QuestionState extends State<Questions> {
             ),
           ),
         ),
-      ));
+      );
 
   @override
   void initState() {
     super.initState();
-    rootBundle.loadString("aaa/questions.json").then((jsonString) {
-      List l = jsonDecode(jsonString)['questions'];
-      for (int i = 0; i < l.length; i++) {
-        questions.add(l[i]);
-      }
-      page = questions.length;
-      /*
-      int i = Random().nextInt(questions.length);
-      String qid = questions[i]['QID'];
-      int? vb0, vb1, vb2, vb3;
-      vb0 = questions[i]['FreedomValue'];
-      vb1 = questions[i]['FaithfulValue'];
-      vb2 = questions[i]['PluralValue'];
-      vb3 = questions[i]['ProgressiveValue'];
-      setState(() {
-        thisQuestion = questions[i]['NAME'];
-        personalIdentify = personalIdentify + qid;
-        offerValue[0] = vb0 ?? 0;
-        offerValue[1] = vb1 ?? 0;
-        offerValue[2] = vb2 ?? 0;
-        offerValue[3] = vb3 ?? 0;
-        questions.removeAt(i);
-      });
-      lunchQuestion 함수에 통합
-      */
-      luchQuestionMap(0);
-    });
+    _funcinit();
   }
 
+  launchQuestion(int cast) {
+    for (int i = 0; i < 4; i++) {
+      value[i] = value[i] + offerValue[i] * cast;
+      maxValue[i] = maxValue[i] + offerValue[i].abs() * 2;
+    }
+    personalMap.addAll({_qid: (cast + 2)});
+
+    if (page == 0) {
+      personalMap.remove("init");
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => Results(
+                    personalId: PersonalId.fromMap(personalMap: personalMap),
+                    value: value,
+                    maxValue: maxValue,
+                  )));
+      return;
+    }
+
+    int x = Random().nextInt(questions.length);
+    _qid = questions[x].getQid;
+    for (int i = 0; i < 4; i++) {
+      offerValue[i] = questions[x].getValue()[i];
+    }
+    setState(() {
+      thisQuestion = questions[x].label;
+      questions.removeAt(x);
+      page = questions.length;
+    });
+  }
+/*
   luchQuestionMap(int cast) {
     value[0] = value[0] + offerValue[0] * cast;
     value[1] = value[1] + offerValue[1] * cast;
@@ -232,5 +243,5 @@ class QuestionState extends State<Questions> {
       thisQuestion = questions[i]['NAME'];
       questions.removeAt(i);
     });
-  }
+  }*/
 }

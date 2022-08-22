@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'DataManager.dart';
+
 //K personalId obj
 class PersonalId {
   String personalId;
@@ -68,7 +70,29 @@ class PersonalId {
     }
   }
 
-  List<int> getValues(List questions) {
+  Future<List<int>> getValues() async {
+    List<int> subValue = [0, 0, 0, 0];
+    List<Question> qs = await QuestionsCaller().questionCall();
+    List<String> lists = list;
+    var v = lists[0].substring(0, 3);
+
+    for (int i = 0; i < qs.length; i++) {
+      if (qs[i].qid == v) {
+        int cast = int.parse(lists[0].substring(list[0].length - 1)) - 2;
+        for (int j = 0; j < 4; j++) {
+          subValue[j] = subValue[j] + qs[i].getValue()[j] * cast;
+        }
+        lists.removeAt(0);
+        if (lists.isEmpty) return subValue;
+        qs.removeAt(i);
+        v = lists[0].substring(0, 3);
+        i = -1;
+      }
+    }
+    return subValue;
+  }
+
+  List<int> oldGetValues(List questions) {
     List<int> subValue = [0, 0, 0, 0];
     var lists = list;
     var v = lists[0].substring(0, 3);
@@ -100,18 +124,6 @@ class PersonalId {
 }
 
 //K: Json Classes
-class Questionsjson {
-  dynamic _jsonString;
-  dynamic _jsonResponse;
-  Future<void> loadFile() async {
-    _jsonString = await rootBundle.loadString("aaa/questions.json");
-    _jsonResponse = jsonDecode(_jsonString);
-  }
-
-  List getQuestions() {
-    return _jsonResponse['questions'];
-  }
-}
 
 class Setsjson {
   dynamic _jsonString;
