@@ -11,27 +11,27 @@ const RESOURCES = {
 "assets/aaa/Pluralism.png": "43ec9e52c89998c8ce12395c1730dc77",
 "assets/aaa/Presbyterian.png": "2ac7c455d79ab27a1ea848d0e25d4a86",
 "assets/aaa/Progessivism.png": "116309e212c07d93cf76f533cf532536",
-"assets/aaa/questions.json": "8b7e5e13af775ffa48ac08a0e0679e02",
 "assets/aaa/sets.json": "ea7a3ff0d877747ec83adb0602b6bc67",
-"assets/AssetManifest.json": "1aafe0bfa58f0444878f5d966dc4f866",
+"assets/AssetManifest.json": "f3ff47a16968047c6a9b145c054def7d",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
 "assets/fonts/MaterialIcons-Regular.otf": "95db9098c58fd6db106f1116bae85a0b",
 "assets/lang/ko-kr.json": "c8844396d8a9103a44ae17cc465946e4",
-"assets/NOTICES": "2d7236aca695ba4cd213a3478e55d740",
+"assets/NOTICES": "6003b7c6da1099a19386f4fc806d74de",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
-"canvaskit/canvaskit.js": "c2b4e5f3d7a3d82aed024e7249a78487",
-"canvaskit/canvaskit.wasm": "4b83d89d9fecbea8ca46f2f760c5a9ba",
-"canvaskit/profiling/canvaskit.js": "ae2949af4efc61d28a4a80fffa1db900",
-"canvaskit/profiling/canvaskit.wasm": "95e736ab31147d1b2c7b25f11d4c32cd",
+"assets/shaders/ink_sparkle.frag": "8890aae0dcb7827879de0310a38af478",
+"canvaskit/canvaskit.js": "2bc454a691c631b07a9307ac4ca47797",
+"canvaskit/canvaskit.wasm": "bf50631470eb967688cca13ee181af62",
+"canvaskit/profiling/canvaskit.js": "38164e5a72bdad0faa4ce740c9b8e564",
+"canvaskit/profiling/canvaskit.wasm": "95a45378b69e77af5ed2bc72b2209b94",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
-"flutter.js": "0816e65a103ba8ba51b174eeeeb2cb67",
+"flutter.js": "f85e6fb278b0fd20c349186fb46ae36d",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
-"index.html": "e25abd980fe16ff92aa07190f24ce592",
-"/": "e25abd980fe16ff92aa07190f24ce592",
-"main.dart.js": "3a9717e02347cf03191c1e810ed19e87",
+"index.html": "eebd4e53b2cdd603e627185811579dc2",
+"/": "eebd4e53b2cdd603e627185811579dc2",
+"main.dart.js": "1ad92d87a45eae9e7a0cecca846f1623",
 "manifest.json": "4df64e52330e56356b65a7c193d21274",
 "version.json": "38ef867f3a323afe420bf42c929c84ed"
 };
@@ -41,7 +41,6 @@ const RESOURCES = {
 const CORE = [
   "main.dart.js",
 "index.html",
-"assets/NOTICES",
 "assets/AssetManifest.json",
 "assets/FontManifest.json"];
 // During install, the TEMP cache is populated with the application shell files.
@@ -140,9 +139,11 @@ self.addEventListener("fetch", (event) => {
     .then((cache) =>  {
       return cache.match(event.request).then((response) => {
         // Either respond with the cached resource, or perform a fetch and
-        // lazily populate the cache.
+        // lazily populate the cache only if the resource was successfully fetched.
         return response || fetch(event.request).then((response) => {
-          cache.put(event.request, response.clone());
+          if (response && Boolean(response.ok)) {
+            cache.put(event.request, response.clone());
+          }
           return response;
         });
       })
